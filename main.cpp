@@ -1,5 +1,6 @@
 #include <iostream>
 #include "convert_currency.h"
+#include "client_user.h"
 
 using namespace std;
 int weLooping = 1;
@@ -20,6 +21,7 @@ int managementReservesOption;
 int managementAwardOption;
 
 convert_currency convertCurrency;
+client_user clientUser;
 
 int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
     while (weLooping == 1) { // HOME PAGE ROLE SELECTION
@@ -35,6 +37,7 @@ int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
                 double amount;
                 cin >> fromCurrency >> toCurrency;
                 cin >> amount;
+
                 cout << convertCurrency.convert_currency_func(fromCurrency, toCurrency, amount);
             }
             else if (clientAction == 2) {
