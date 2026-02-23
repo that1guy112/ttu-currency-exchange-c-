@@ -8,6 +8,7 @@ using namespace std;
 
 client_user clientUser;
 
+// convert_currency class function to convert one currency to another
 double convert_currency::convert_currency_func(
     const std::string& fromCurrency,
     const std::string& toCurrency,
