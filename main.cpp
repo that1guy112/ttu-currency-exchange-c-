@@ -1,4 +1,6 @@
 #include <iostream>
+#include "convert_currency.h"
+
 using namespace std;
 int weLooping = 1;
 int roleSelection;
@@ -17,6 +19,8 @@ int managementExchangeOption;
 int managementReservesOption;
 int managementAwardOption;
 
+convert_currency convertCurrency;
+
 int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
     while (weLooping == 1) { // HOME PAGE ROLE SELECTION
         cout << "Welcome to the Home Page\nPlease select your role:\n1) Client\n2) Cashier\n3) Management\n9) Exit the program.\n------\n";
@@ -26,7 +30,12 @@ int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
             cin >> clientAction;
             if (clientAction == 1) {
                 cout << "Apply for a currency exchange from the currencies listed below:\n1) EUR ---> USD\n2) USD ---> EUR\n3) EXIT\n------\n";
-                cin >> clientCurrencyOption;
+                //cin >> clientCurrencyOption;
+                string fromCurrency, toCurrency;
+                double amount;
+                cin >> fromCurrency >> toCurrency;
+                cin >> amount;
+                cout << convertCurrency.convert_currency_func(fromCurrency, toCurrency, amount);
             }
             else if (clientAction == 2) {
                 cout << "What would you like to view?\n1) Ongoing orders\n2) Receipts\n------\n";

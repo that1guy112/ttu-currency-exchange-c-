@@ -6,4 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(ttu_currency_exchange_c_
         main.cpp
         management.cpp
-        public.cpp)
+        convert_currency.cpp
+        conversion_rate.cpp
+        conversion_rate.h
+        convert_currency.h)
