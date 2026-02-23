@@ -3,8 +3,8 @@
 # Currency Exchange System. (RELEASE 1)
 
 Current features:
-System correctly converts EUR to USD (although the user cannot see it in their balance)
-Cycling through menus functions correctly
+System correctly converts EUR to USD and vice versa (although the user cannot see it in their balance)
+Menu loop functions correctly
 
 Current known bugs/issues (as of Release 1 and will be fixed in future releases):
 JPY currency not implemented
