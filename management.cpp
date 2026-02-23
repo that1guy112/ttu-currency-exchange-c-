@@ -7,8 +7,9 @@ using namespace std;
 
 conversion_rate conversion_rate;
 
+// management class function to change conversion rate of currency
 void management::change_conversion_rate(const std::string &Currency, const double value)
-{ // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
+{
     if (Currency == "USD") {
         conversion_rate.USD_CONVERSION_RATE = value;
     }

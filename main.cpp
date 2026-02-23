@@ -7,24 +7,24 @@ using namespace std;
 int weLooping = 1;
 int roleSelection;
 
-int clientAction; // VARIABLES RELATED TO CLIENT ACTIVITY
+int clientAction; // Variables related to client activity
 
-int cashierAction; // VARIABLES RELATED TO CASHIER ACTIVITY
+int cashierAction; // Variables related to cashier activity
 
-int managementAction; // VARIABLES RELATED TO MANAGEMENT ACTIVITY
+int managementAction; // Variables related to management activity
 
-convert_currency convertCurrency;
+convert_currency convertCurrency; //create classes to be used in code
 management managementConversion;
 
 bool exitOption = false;
 bool finalExitOption = false;
 
-void client() {
+void client() { // Client user option
     while (exitOption == false) {
         cout << "------\nYou have selected 'Client'\nWhat would you like to do?\n1) Exchange Currency\n2) View Orders\n9) Exit\n------\n";
         cin >> clientAction;
         switch (clientAction) {
-            case 1: {
+            case 1: { // Currency exchange
                 double amount;
                 string fromCurrency, toCurrency;
                 cout << "Apply for a currency exchange from the currencies listed below:\n  EUR  /  USD  /  JPY\nApply for an exchange by typing in the currencies one after another\n";
@@ -47,7 +47,7 @@ void client() {
     }
 }
 
-void cashier() {
+void cashier() { // Management user option
     while (exitOption == false) {
         cout << "------\nYou have selected 'Cashier'\nWhat would you like to do?\n1) View Currency Exchange Orders\n2) View Currency Reserves\n3) Submit Summary Report\n9) Exit\n------\n";
         cin >> cashierAction;
@@ -72,12 +72,12 @@ void cashier() {
     }
 }
 
-void management() {
+void management() { // Management user option
     while (exitOption == false) {
         cout << "------\nYou have selected 'Management'\nWhat would you like to do?\n1) Set exchange rates\n2) Modify reserves\n3) Award the Cashier a monthly bonus\n9) Exit\n------\n";
         cin >> managementAction;
         switch (managementAction) {
-            case 1: {
+            case 1: { // Changing the currency exchange rate and saving it for future currency exchanges
                 string rateChangeCurrency;
                 double newExchangeRate;
                 cout << "What currencies exchange rate would you like to change?\n---------------------\nEUR  /  USD   /  JPY\n---------------------\n";
@@ -104,8 +104,7 @@ void management() {
     }
 }
 
-    int main () {
-    // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
+    int main () { // Home page loop
     while (finalExitOption == false) {
         exitOption = false;
         cout << "------\nWelcome to the Home Page!\nPlease select your role:\n1) Client\n2) Cashier\n3) Management\n9) Exit the program.\n------\n";
