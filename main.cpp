@@ -1,6 +1,7 @@
 #include <iostream>
 #include "convert_currency.h"
 #include "client_user.h"
+#include "management.h"
 
 using namespace std;
 int weLooping = 1;
@@ -16,14 +17,97 @@ int cashierReservesOption;
 int cashierSummaryOption;
 
 int managementAction; // VARIABLES RELATED TO MANAGEMENT ACTIVITY
-int managementExchangeOption;
 int managementReservesOption;
 int managementAwardOption;
 
-convert_currency convertCurrency;
-client_user clientUser;
+double amount; //CURRENCY CONVERSION SHENANIGANS
+string fromCurrency, toCurrency;
 
-int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
+convert_currency convertCurrency;
+management management1;
+
+bool exitOption = false;
+bool finalExitOption = false;
+
+void client() {
+    while (exitOption == false) {
+        cout << "You have selected 'Client'\nWhat would you like to do?\n1) Exchange Currency\n2) View Orders\n3) Exit\n------\n";
+        cin >> clientAction;
+        switch (clientAction) {
+            case 1: {
+                cout << "Apply for a currency exchange from the currencies listed below:\n  EUR  /  USD  /  JPY\nApply for an exchange by typing in the currencies one after another\n";
+                cout << "x ---> y\n";
+                cin >> fromCurrency >> toCurrency;
+                cout << "Enter the amount of money you would like to convert\n";
+                cin >> amount;
+                cout << "You have converted " << amount << " " << fromCurrency << " to " << convertCurrency.convert_currency_func(fromCurrency, toCurrency, amount) << " " << toCurrency << "\n";
+                break;
+            }
+            case 2: {
+                cout << "What would you like to view?\n1) Ongoing orders\n2) Receipts\n------\n";
+                cin >> clientOrderOption;
+                break;
+            }
+            case 3: {
+                exitOption = true;
+                break;
+            }
+        }
+    }
+}
+
+void cashier() {
+    while (exitOption == false) {
+        cout << "You have selected 'Cashier'\nWhat would you like to do?\n1) View Currency Exchange Orders\n2) View Currency Reserves\n3) Submit Summary Report\n4) Exit\n------\n";
+        cin >> cashierAction;
+        switch (cashierAction) {
+            case 1: {
+                cout << "Viewing orders for currency exchanges\n";
+                break;
+            }
+            case 2: {
+                cout << "Viewing reserves for currency exchanges\n";
+                break;
+            }
+            case 3: {
+                cout << "Creating daily summary report\n";
+                break;
+            }
+            case 4: {
+                exitOption = true;
+                break;
+            }
+        }
+    }
+}
+
+
+    int main () {
+    // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
+    while (finalExitOption == false) {
+        cout << "Welcome to the Home Page!\nPlease select your role:\n1) Client\n2) Cashier\n3) Management\n9) Exit the program.\n------\n";
+        cin >> roleSelection;
+        switch (roleSelection) {
+            case 1: {
+                client();
+                break;
+            }
+            case 2: {
+                cashier();
+                break;
+            }
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+/*int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
     while (weLooping == 1) { // HOME PAGE ROLE SELECTION
         cout << "Welcome to the Home Page\nPlease select your role:\n1) Client\n2) Cashier\n3) Management\n9) Exit the program.\n------\n";
         cin >> roleSelection;
@@ -31,14 +115,12 @@ int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
             cout << "You have selected 'Client'\nWhat would you like to do?\n1) Exchange Currency\n2) View Orders\n------\n";
             cin >> clientAction;
             if (clientAction == 1) {
-                cout << "Apply for a currency exchange from the currencies listed below:\n1) EUR ---> USD\n2) USD ---> EUR\n3) EXIT\n------\n";
-                //cin >> clientCurrencyOption;
-                string fromCurrency, toCurrency;
-                double amount;
+                cout << "Apply for a currency exchange from the currencies listed below:\n  EUR  /  USD  /  JPY\nApply for an exchange by typing in the currencies one after another\n";
+                cout << "x ---> y\n";
                 cin >> fromCurrency >> toCurrency;
+                cout << "Enter the amount of money you would like to convert\n";
                 cin >> amount;
-
-                cout << convertCurrency.convert_currency_func(fromCurrency, toCurrency, amount);
+                cout << "You have converted " << amount << " " << fromCurrency << " to " << convertCurrency.convert_currency_func(fromCurrency, toCurrency, amount) << " " << toCurrency << "\n";
             }
             else if (clientAction == 2) {
                 cout << "What would you like to view?\n1) Ongoing orders\n2) Receipts\n------\n";
@@ -65,8 +147,15 @@ int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
             cout << "You have selected 'Management'\nWhat would you like to do?\n1) Set exchange rates\n2) Modify reserves\n3) Award the Cashier a monthly bonus\n------\n";
             cin >> managementAction;
             if (managementAction == 1) {
-                cout << "What currencies exchange rate would you like to change?\n1) EUR\n2) USD\n------\n";
-                cin >> managementExchangeOption;
+                cout << "What currencies exchange rate would you like to change?\n---------------------\nEUR  /  USD   /  JPY\n---------------------\n";
+                string rateChangeCurrency;
+                double newExchangeRate;
+                cin >> rateChangeCurrency;
+                cout << "What would you like the new exchange rate to be?\n";
+                cin >> newExchangeRate;
+                cout << "The new exchange rate for " << rateChangeCurrency << " is " << newExchangeRate << "\n";
+                management1.change_conversion_rate(rateChangeCurrency, newExchangeRate);
+
             }
             else if (managementAction == 2) {
                 cout << "Which currencies reserves would you like to modify?\n1) EUR\n2) USD\n------\n";
@@ -86,4 +175,4 @@ int main () { // THE MAIN LOOP UNDER WHICH THE PROGRAM RUNS
     }
 
 return 0;
-}
+}*/

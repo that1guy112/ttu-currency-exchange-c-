@@ -12,4 +12,5 @@ add_executable(ttu_currency_exchange_c_
         convert_currency.h
         management.h
         client_user.cpp
-        client_user.h)
+        client_user.h
+)
