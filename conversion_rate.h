@@ -9,9 +9,9 @@
 class conversion_rate
 {
     public:
-    double EUR_CONVERSION_RATE = 0.92;
-    double USD_CONVERSION_RATE = 1.18f;
-    double JPY_CONVERSION_RATE;
+    static double EUR_CONVERSION_RATE;
+    static double USD_CONVERSION_RATE;
+    static double JPY_CONVERSION_RATE;
 };
 
 

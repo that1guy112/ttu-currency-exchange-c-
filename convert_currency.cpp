@@ -17,12 +17,11 @@ double convert_currency::convert_currency_func(
     // example implementation: cover return on all paths
     if (fromCurrency == "USD" && toCurrency == "EUR") {
         clientUser.usdAmount -= amount;
-        clientUser.usdAmount = amount * conversion.EUR_CONVERSION_RATE;
         return amount * conversion.EUR_CONVERSION_RATE;
     } else if (fromCurrency == "EUR" && toCurrency == "USD") {
         clientUser.eurAmount -= amount;
         return amount * conversion.USD_CONVERSION_RATE;
-    }
+    } else if (fromCurrency == "EUR")
 
     // fallback: if no conversion rule matched, return original amount (or throw)
     return amount;
