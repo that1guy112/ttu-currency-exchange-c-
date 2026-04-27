@@ -1,22 +1,53 @@
 #include "exchange_manager.h"
 #include "currency_repository.h"
-#include <iostream>
+#include "exchange_exceptions.h"
+#include <sstream>
 #include <iomanip>
 
+// SummaryReport::generateReport — IReportable implementation
+std::string SummaryReport::generateReport() const {
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(2);
+    ss << "=== Summary Report ===\n";
+    ss << "EUR Reserve : " << eurReserve  << " EUR\n";
+    ss << "USD Reserve : " << usdReserve  << " USD\n";
+    ss << "Total Profit: " << totalProfit << "\n";
+    ss << "Orders      : " << orderCount  << "\n";
+    ss << "=====================\n";
+    return ss.str();
+}
+
+
 int ExchangeManager::processExchange(CurrencyPair pair, double amount) {
+    // Precondition: amount must be positive
+    if (amount <= 0)
+        throw InvalidData("Amount must be positive.");
+
     double rate;
     double amountOut;
 
     if (pair == CurrencyPair::EUR_TO_USD) {
         rate = CurrencyRepository::getEurToUsdRate();
         amountOut = amount * rate;
-        CurrencyRepository::modifyEurReserve(amount);
+
+        // Postcondition guard: result must be positive
+        if (amountOut <= 0)
+            throw LogicError("Conversion result invalid. Check exchange rate.");
+
+        // Repository layer - throws InsufficientReserve if USD reserve too low
         CurrencyRepository::modifyUsdReserve(-amountOut);
+        CurrencyRepository::modifyEurReserve(amount);
     } else {
         rate = CurrencyRepository::getUsdToEurRate();
         amountOut = amount * rate;
-        CurrencyRepository::modifyUsdReserve(amount);
+
+        //Postcondition guard: result must be positive
+        if (amountOut <= 0)
+            throw LogicError("Conversion result invalid. Check exchange rate.");
+
+        // Repository layer - throws InsufficientReserve if EUR reserve too low
         CurrencyRepository::modifyEurReserve(-amountOut);
+        CurrencyRepository::modifyUsdReserve(amount);
     }
 
     double commission = amountOut * 0.01; // 1% commission
@@ -25,82 +56,72 @@ int ExchangeManager::processExchange(CurrencyPair pair, double amount) {
     int id = OrderRepository::addOrder(pair, amount, amountOut, rate);
     OrderRepository::completeOrder(id);
 
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << "Exchange successful! You receive: " << amountOut
-              << (pair == CurrencyPair::EUR_TO_USD ? " USD" : " EUR")
-              << " (commission: " << commission << ")\n";
-
     return id;
 }
 
-void ExchangeManager::viewOngoingOrders() {
-    std::vector<Order> ongoing = OrderRepository::getOngoingOrders();
-    if (ongoing.empty()) {
-        std::cout << "No ongoing orders.\n";
-        return;
-    }
-    for (const Order& o : ongoing) {
-        std::cout << o.receipt << " [PENDING]\n";
-    }
+std::vector<std::string> ExchangeManager::getOngoingOrderLines() {
+    std::vector<Order>  ongoing = OrderRepository::getOngoingOrders();
+    std::vector<std::string> lines;
+    for (const Order& o : ongoing)
+        lines.push_back(o.generateReport() + " [PENDING]");
+    return lines;
 }
 
-void ExchangeManager::viewReceipts() {
-    std::vector<Order> completed = OrderRepository::getCompletedOrders();
-    if (completed.empty()) {
-        std::cout << "No receipts available.\n";
-        return;
-    }
-    for (const Order& o : completed) {
-        std::cout << o.receipt << " [COMPLETED]\n";
-    }
+std::vector<std::string> ExchangeManager::getReceiptLines() {
+    std::vector<Order>  completed = OrderRepository::getCompletedOrders();
+    std::vector<std::string> lines;
+    for (const Order& o : completed)
+        lines.push_back(o.generateReport() + " [COMPLETED]");
+    return lines;
 }
 
-void ExchangeManager::viewAllOrders() {
+std::vector<std::string> ExchangeManager::getAllOrderLines() {
     const std::vector<Order>& all = OrderRepository::getAllOrders();
-    if (all.empty()) {
-        std::cout << "No orders found.\n";
-        return;
-    }
-    for (const Order& o : all) {
-        std::cout << o.receipt
-                  << (o.completed ? " [COMPLETED]" : " [PENDING]") << "\n";
-    }
+    std::vector<std::string> lines;
+    for (const Order& o : all)
+        lines.push_back(o.generateReport() +
+                        (o.completed ? " [COMPLETED]" : " [PENDING]"));
+    return lines;
 }
 
-void ExchangeManager::viewReserves() {
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << "EUR Reserve: " << CurrencyRepository::getEurReserve() << " EUR\n";
-    std::cout << "USD Reserve: " << CurrencyRepository::getUsdReserve() << " USD\n";
+std::vector<std::string> ExchangeManager::getReserveLines() {
+    std::ostringstream eur, usd;
+    eur << std::fixed << std::setprecision(2)
+        << "EUR Reserve: " << CurrencyRepository::getEurReserve() << " EUR";
+    usd << std::fixed << std::setprecision(2)
+        << "USD Reserve: " << CurrencyRepository::getUsdReserve() << " USD";
+    return { eur.str(), usd.str() };
 }
 
-void ExchangeManager::submitSummaryReport() {
-    //TODO:
+SummaryReport ExchangeManager::buildSummaryReport() {
+    SummaryReport report;
+    report.eurReserve = CurrencyRepository::getEurReserve();
+    report.usdReserve = CurrencyRepository::getUsdReserve();
+    report.totalProfit = CurrencyRepository::getTotalProfit();
+    report.orderCount = static_cast<int>(OrderRepository::getAllOrders().size());
+    return report;
 }
 
+// Precondition:  newRate > 0 - throws InvalidData if violated
+// Postcondition: stored rate == newRate
 void ExchangeManager::setExchangeRate(CurrencyPair pair, double newRate) {
-    if (pair == CurrencyPair::EUR_TO_USD) {
+    if (newRate <= 0)
+        throw InvalidData("Exchange rate must be positive.");
+
+    if (pair == CurrencyPair::EUR_TO_USD)
         CurrencyRepository::setEurToUsdRate(newRate);
-        std::cout << "EUR to USD rate updated to " << newRate << "\n";
-    } else {
+    else
         CurrencyRepository::setUsdToEurRate(newRate);
-        std::cout << "USD to EUR rate updated to " << newRate << "\n";
-    }
 }
 
+// Throws InsufficientReserve (propagated from Repository) if result < 0
 void ExchangeManager::modifyReserve(CurrencyPair pair, double amount) {
-    if (pair == CurrencyPair::EUR_TO_USD) {
+    if (pair == CurrencyPair::EUR_TO_USD)
         CurrencyRepository::modifyEurReserve(amount);
-        std::cout << "EUR reserve adjusted by " << amount << "\n";
-    } else {
+    else
         CurrencyRepository::modifyUsdReserve(amount);
-        std::cout << "USD reserve adjusted by " << amount << "\n";
-    }
 }
 
-bool ExchangeManager::awardCashierBonus() {
-    double bonus = CurrencyRepository::getTotalProfit() * 0.05;
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << "Cashier bonus awarded: " << bonus << " (5% of total profit: "
-              << CurrencyRepository::getTotalProfit() << ")\n";
-    return true;
+double ExchangeManager::computeCashierBonus() {
+    return CurrencyRepository::getTotalProfit() * 0.05;
 }

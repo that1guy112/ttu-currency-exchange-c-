@@ -19,8 +19,19 @@ void CurrencyRepository::setUsdToEurRate(double rate) { usdToEurRate = rate; }
 double CurrencyRepository::getEurReserve() { return eurReserve; }
 double CurrencyRepository::getUsdReserve() { return usdReserve; }
 
-void CurrencyRepository::modifyEurReserve(double amount) { eurReserve += amount; }
-void CurrencyRepository::modifyUsdReserve(double amount) { usdReserve += amount; }
+void CurrencyRepository::modifyEurReserve(double amount) {
+    // Precondition: result must not go below zero
+    if (eurReserve + amount < 0)
+        throw InsufficientReserve("EUR reserve insufficient for this operation.");
+    eurReserve += amount;
+}
+
+void CurrencyRepository::modifyUsdReserve(double amount) {
+    // Precondition: result must not go below zero
+    if (usdReserve + amount < 0)
+        throw InsufficientReserve("USD reserve insufficient for this operation.");
+    usdReserve += amount;
+}
 
 double CurrencyRepository::getTotalProfit() { return totalProfit; }
 void CurrencyRepository::addProfit(double amount) { totalProfit += amount; }

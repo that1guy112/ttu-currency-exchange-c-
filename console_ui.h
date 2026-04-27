@@ -21,17 +21,17 @@ enum class ClientOrderView {
 };
 
 enum class CashierAction {
-    VIEW_ORDERS  = 1,
+    VIEW_ORDERS   = 1,
     VIEW_RESERVES = 2,
     SUBMIT_REPORT = 3,
     BACK          = 9
 };
 
 enum class ManagementAction {
-    SET_RATES    = 1,
+    SET_RATES       = 1,
     MODIFY_RESERVES = 2,
-    AWARD_BONUS  = 3,
-    BACK         = 9
+    AWARD_BONUS     = 3,
+    BACK            = 9
 };
 
 enum class CurrencyOption {
